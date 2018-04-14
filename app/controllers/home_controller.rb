@@ -10,8 +10,8 @@ class HomeController < ApplicationController
 
   def report_submit
     # polling_area = PollingArea.find_by name: params[:area]
-    polling_area = PollingArea.find 1
-    PamphletEffort.create user: current_user, pollingArea: polling_area, reportBack: params[:notes]
+    # polling_area = PollingArea.find 1
+    # PamphletEffort.create user: current_user, pollingArea: polling_area, reportBack: params[:notes]
     redirect_to home_index_path, flash: { notice: 'Your report has been sent.' }
   end
 end
