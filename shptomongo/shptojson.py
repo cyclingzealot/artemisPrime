@@ -36,7 +36,8 @@ def convert_shp_to_geojson(input_path, output_path):
 
   try:
     completed_process = subprocess.run(
-      [convert_binary,'-f','GeoJSON', output_path, input_path],
+      [convert_binary,'-f','GeoJSON', output_path, input_path,
+       '-lco', 'RFC7946=YES'],
       stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   except FileNotFoundError:
     print("The program '%s' is missing. You need to have that installed " +
