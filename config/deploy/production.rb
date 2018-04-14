@@ -7,6 +7,8 @@ server "ubuntu@ec2-54-145-123-77.compute-1.amazonaws.com", user: "artemis", role
 # server "example.com", user: "deploy", roles: %w{app web}, other_property: :other_value
 # server "db.example.com", user: "deploy", roles: %w{db}
 
+set :branch, "release"
+
 
 
 # role-based syntax

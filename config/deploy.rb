@@ -2,13 +2,13 @@
 lock "~> 3.10.1"
 
 set :application, "artemisPrime"
-set :repo_url, "git@github.com:cyclingzealot/tlaloc.git"
+set :repo_url, "git@github.com:cyclingzealot/artemisPrime.git"
 
 # Default branch is :master
  ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, "/home/artemis/artemis"
+set :deploy_to, "/home/artemis/artemis"
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
@@ -31,6 +31,7 @@ set :repo_url, "git@github.com:cyclingzealot/tlaloc.git"
 
 # Default value for local_user is ENV['USER']
 # set :local_user, -> { `git config user.name`.chomp }
+set :local_user, "artemis"
 
 # Default value for keep_releases is 5
 # set :keep_releases, 10 
