@@ -1,3 +1,12 @@
+"""
+Example usage:
+  python3 jsontomongo.py \
+    -i output.geojson \
+    -u ubuntu \
+    -s some-server.amazonaws.com \
+    -p ~/mongokey.pem
+"""
+
 import pymongo
 import json
 import argparse

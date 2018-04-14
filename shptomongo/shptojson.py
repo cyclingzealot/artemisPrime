@@ -1,5 +1,8 @@
 """
 Converts SHP file to GeoJSON.
+
+Example usage:
+    python3 shptojson.py -i federalPollingBoundariesSample.shp
 """
 
 import argparse
