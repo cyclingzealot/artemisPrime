@@ -24,7 +24,15 @@ MongoDB instance, in a `FairVotes` db. Then run the following command
 to upload the parsed contents of the GeoJSON file to MongoDB:
 
 ```
-Example usage:
+  python3 jsontomongo.py \
+    -i output.geojson \
+    -m mongodb://user:pass@somebox.mlab.com:11248/fairvote
+```
+
+If you need to use an SSH tunnel to access MongoDB instead, you can use
+the following command:
+
+```
   python3 jsontomongo.py \
     -i output.geojson \
     -u ubuntu \
