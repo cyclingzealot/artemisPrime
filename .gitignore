@@ -53,3 +53,4 @@ build-iPhoneSimulator/
 .rvmrc
 rawData/data/
 *.sw?
+log/
