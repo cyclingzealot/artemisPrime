@@ -5,6 +5,11 @@ class User
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  field :name,              type: String
+  field :isOrganizer, type: Boolean, default: false
+  field :enable,              type: Boolean, default: true
+  field :can_create_event, type: Boolean, default: true
+
   ## Database authenticatable
   field :email,              type: String, default: ""
   field :encrypted_password, type: String, default: ""
