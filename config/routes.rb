@@ -6,5 +6,10 @@ Rails.application.routes.draw do
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  resources :home, only: [:index]
+  resources :home, only: [:index] do
+    member do
+      get 'report_back'
+      post 'report_back', to: 'home#report_submit', as: 'report_submit'
+    end
+  end
 end
