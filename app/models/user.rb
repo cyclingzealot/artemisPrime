@@ -10,6 +10,7 @@ class User
   field :enable,              type: Boolean, default: true
   field :can_create_event, type: Boolean, default: true
   field :phone_number, type: String
+  field :city, type: String
 
   ## Database authenticatable
   field :email,              type: String, default: ""
