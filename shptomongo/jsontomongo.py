@@ -5,6 +5,10 @@ Example usage:
     -u ubuntu \
     -s some-server.amazonaws.com \
     -p ~/mongokey.pem
+
+  python3 jsontomongo.py \
+    -i output.geojson \
+    -m mongodb://user:pass@somebox.mlab.com:11248/fairvote
 """
 
 import pymongo
@@ -20,6 +24,30 @@ def main():
 
   arguments = load_command_line_arguments()
 
+  if arguments.mongodb:
+    upload_with_direct_connection(arguments)
+  else:
+    upload_with_ssh_tunnel(arguments)
+
+def load_command_line_arguments():
+  """
+  Load command-line arguments.
+  """
+  parser = argparse.ArgumentParser(description='Uploads a GeoJSON file to MongoDB.')
+  parser.add_argument('--file', '-i', required=True,
+                      help='the GeoJSON file')
+  parser.add_argument('--mongodb', '-m', required=False,
+                    help='the mongo db connection string')
+  parser.add_argument('--host', '-s', required=False,
+                    help='the host/ip for the server instance')
+  parser.add_argument('--user', '-u', required=False,
+                    help='the ssh user to the server instance')
+  parser.add_argument('--pem', '-p', required=False,
+                    help='the ssh .pem to the server instance')
+  args = parser.parse_args()
+  return args
+
+def upload_with_ssh_tunnel(arguments):
   with SSHTunnelForwarder(
       arguments.host,
       ssh_username=arguments.user,
@@ -29,21 +57,9 @@ def main():
     client = pymongo.MongoClient('127.0.0.1', tunnel.local_bind_port)
     upload_json_to_mongo(client, arguments.file)
 
-def load_command_line_arguments():
-  """
-  Load command-line arguments.
-  """
-  parser = argparse.ArgumentParser(description='Uploads a GeoJSON file to MongoDB.')
-  parser.add_argument('--file', '-i', required=True,
-                      help='the GeoJSON file')
-  parser.add_argument('--host', '-s', required=True,
-                    help='the host/ip for the server instance')
-  parser.add_argument('--user', '-u', required=True,
-                    help='the ssh user to the server instance')
-  parser.add_argument('--pem', '-p', required=True,
-                    help='the ssh .pem to the server instance')
-  args = parser.parse_args()
-  return args
+def upload_with_direct_connection(arguments):
+  client = pymongo.MongoClient(arguments.mongodb)
+  upload_json_to_mongo(client, arguments.file)
 
 def upload_json_to_mongo(client, input_file):
   """Upload JSON data to MongoDB instance."""
@@ -61,7 +77,7 @@ def create_raw_geo_json_entry(client, input_file, raw_json):
     "file": raw_json
   }
 
-  client.FairVote.rawGeoJson.update(
+  client.fairvote.rawGeoJson.update(
     {'_id':input_file}, {"$set": raw_geo_json_entry}, upsert=True)
 
 def create_polling_area_entry(client, input_file, parsed_json):
@@ -73,7 +89,7 @@ def create_polling_area_entry(client, input_file, parsed_json):
     key = "%s:%s" % (input_file, pd_id)
     polling_area["_id"] = key
 
-    client.FairVote.pollingAreas.update(
+    client.fairvote.pollingAreas.update(
       {'_id':key}, {"$set": polling_area}, upsert=True)
 
 if __name__ == "__main__":
