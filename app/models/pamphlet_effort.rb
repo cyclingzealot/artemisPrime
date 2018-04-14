@@ -1,7 +1,11 @@
 class PamphletEffort
   include Mongoid::Document
-  field :volunteer, type: Reference
-  field :pollingArea, type: Reference
   field :reportBack, type: String
-  field :state, type: Reference
+
+  belongs_to :volunteer
+  belongs_to :pollingArea
+  belongs_to :state
+  #field :volunteer, type: Reference
+  #field :pollingArea, type: Reference
+  #field :state, type: Reference
 end
