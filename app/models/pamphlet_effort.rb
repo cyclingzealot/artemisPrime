@@ -4,7 +4,6 @@ class PamphletEffort
 
   belongs_to :volunteer
   belongs_to :pollingArea
-  belongs_to :state
   #field :volunteer, type: Reference
   #field :pollingArea, type: Reference
   #field :state, type: Reference
