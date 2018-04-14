@@ -1,5 +1,5 @@
 """
-Converts SHP file to KML.
+Converts SHP file to GeoJSON.
 """
 
 import argparse
@@ -7,7 +7,7 @@ import subprocess
 
 def main():
   """
-  Converts the SHP file to KML
+  Converts the SHP file to GeoJSON
   """
 
   arguments = load_command_line_arguments()
