@@ -88,6 +88,7 @@ def create_polling_area_entry(client, input_file, parsed_json):
     pd_id = properties['PD_ID']
     key = "%s:%s" % (input_file, pd_id)
     polling_area["_id"] = key
+    polling_area["status"] = 'unknown'
 
     client.fairvote.pollingAreas.update(
       {'_id':key}, {"$set": polling_area}, upsert=True)
