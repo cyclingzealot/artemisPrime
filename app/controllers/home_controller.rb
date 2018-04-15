@@ -37,27 +37,36 @@ class HomeController < ApplicationController
 
         if not params[:test].nil?
             render :inline => "<%= #{params.to_s} %>"
-            
+            return
         end
         
-        pollingArea = params[:pollingArea]
-        volunteerId          = params[:id]
+        pollingArea = params[:unique_polling_id]
+        volunteerId          = params[:user_id]
 
         v = User.find(volunteerId)
 
 
-        puts "Found #{v}"
         v or raise "Volunteer not found!"
+        puts "Found #{v}"
         
-        pe = PamfletEffort.new(
+        pe = PamphletEffort.new(
             pollingAreaId:  pollingArea,
             user: v
         )
 
         pe.save!
 
-        head :no_content
-        
+		puts "Success!!! Redirecting...."
+
+    	URI uri = URI::HTTP.build({
+        	host: 'localhost',
+            port: 8000,
+            path: '/printable.html',
+            query: "unique_polling_id=#{pollingArea}"
+        })
+
+    	redirect_to uri.to_s
+
 
   end
 end
