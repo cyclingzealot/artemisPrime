@@ -13,16 +13,12 @@ class HomeController < ApplicationController
     pamphlet_effort = false
     return redirect_to home_index_path, flash: { error: "You don't have an assigned polling area to report about." } unless pamphlet_effort
 
-    pamphlet_effort_id = current_user.pamphlet_effort.id
-    redirect_to home_index_path, flash: { error: "You don't have an assigned polling area to report about." } unless pamphlet_effort_id
-
-    pamphlet_effort = PamphletEffort.find(pamplet_effort_id)
     pamphlet_effort.update_attribute(reportBack: params[:notes])
 
     redirect_to home_index_path, flash: { notice: 'Your report has been sent.' }
   end
 
-  def request_assignment
+  def request_map_assignment
     URI uri = URI::HTTP.build({
                          host: 'localhost',
                          port: 8000,
