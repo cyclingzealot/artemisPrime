@@ -9,8 +9,9 @@ class HomeController < ApplicationController
   end
 
   def report_submit
-    pamphlet_effort = (PamphletEffort.find_by user_id: current_user.id)&.first
-    redirect_to home_index_path, flash: { error: "You don't have an assigned polling area to report about." } unless pamphlet_effort
+    # pamphlet_effort = (PamphletEffort.find_by user_id: current_user.id)&.first
+    pamphlet_effort = false
+    return redirect_to home_index_path, flash: { error: "You don't have an assigned polling area to report about." } unless pamphlet_effort
 
     pamphlet_effort_id = current_user.pamphlet_effort.id
     redirect_to home_index_path, flash: { error: "You don't have an assigned polling area to report about." } unless pamphlet_effort_id
@@ -22,12 +23,14 @@ class HomeController < ApplicationController
   end
 
   def request_assignment
-    URI::HTTPS.build({
+    URI uri = URI::HTTP.build({
                          host: 'localhost',
                          port: 8000,
                          path: '/assign.html',
-                         query: "user_id = #{current_user.id}&filename=output.geojson"
+                         query: "user_id=#{current_user.id}&file_name=output.geojson"
                      })
+
+    redirect_to uri.to_s
   end
 
   def pamphlet_effort
@@ -56,5 +59,4 @@ class HomeController < ApplicationController
         
 
   end
-
 end
