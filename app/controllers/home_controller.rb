@@ -9,8 +9,8 @@ class HomeController < ApplicationController
 
   def report_submit
     # pamphlet_effort = (PamphletEffort.find_by user_id: current_user.id)&.first
-    pamphlet_effort = nil
-    redirect_to home_index_path, flash: { error: "You don't have an assigned polling area to report about." } unless pamphlet_effort
+    pamphlet_effort = false
+    return redirect_to home_index_path, flash: { error: "You don't have an assigned polling area to report about." } unless pamphlet_effort
 
     pamphlet_effort.update_attribute(reportBack: params[:notes])
 
@@ -29,5 +29,4 @@ class HomeController < ApplicationController
   def pamphlet_effort
 
   end
-
 end
