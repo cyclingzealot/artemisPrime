@@ -18,7 +18,7 @@ class HomeController < ApplicationController
     redirect_to home_index_path, flash: { notice: 'Your report has been sent.' }
   end
 
-  def request_assignment
+  def request_map_assignment
     URI uri = URI::HTTP.build({
                          host: 'localhost',
                          port: 8000,
