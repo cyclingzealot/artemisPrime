@@ -18,7 +18,7 @@ class HomeController < ApplicationController
 
   def request_assignment
     URI::HTTPS.build({
-                         host: localhost,
+                         host: 'localhost',
                          port: 8000,
                          path: '/assign.html',
                          query: "user_id = #{current_user.id}&filename=output.geojson"
