@@ -1,2 +1,6 @@
 MongoDB with Mongoid in Rails - Geospatial Indexing
 https://stackoverflow.com/questions/7702244/mongodb-with-mongoid-in-rails-geospatial-indexing
+
+http://guides.rubyonrails.org/routing.html
+http://api.rubyonrails.org/classes/ActionDispatch/Routing.html
+
