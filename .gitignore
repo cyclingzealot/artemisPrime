@@ -55,3 +55,4 @@ rawData/data/
 *.dia.autosave
 *.sw?
 log/
+.byebug_history
