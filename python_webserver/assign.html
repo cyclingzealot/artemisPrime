@@ -61,39 +61,26 @@
       function assignPollingArea(unique_polling_id, user_id){
         if (confirm('Are you sure you want to confirm your canvasing area?')) {
             // make post request
-            $.post("http://54.145.123.77:3000/home/0/request_assignment",
-              {
-                  user_id: user_id,
-                  polling_id: unique_polling_id
-              },
-              function(data, status){
-                if (status == 'success'){
-                  console.log(data)
-                  console.log(status)
+            var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/' + unique_polling_id + '?apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
+    
+            // get drop down select
+            var new_status = $("#statusoptions").val()
+            var new_data = JSON.stringify( { "$set" : { "status" : 'assigned' } } )
 
-                  var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/' + unique_polling_id + '?apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
-          
-                  // get drop down select
-                  var new_status = $("#statusoptions").val()
-                  var new_data = JSON.stringify( { "$set" : { "status" : 'assigned' } } )
-
-                  $.ajax( { 
-                    type: "PUT",
-                    url: query_string,
-                    data: new_data,
-                    contentType: "application/json",
-                    success: function(response){
-                      setTimeout(
-                        function() 
-                        {
-                           window.location.href = 'http://localhost:8000/printable.html?unique_polling_id=' + unique_polling_id
-                        }, 1000);
-                      }
-                    }
-                  );
+            $.ajax( { 
+              type: "PUT",
+              url: query_string,
+              data: new_data,
+              contentType: "application/json",
+              success: function(response){
+                setTimeout(
+                  function() 
+                  {
+                     window.location.href = 'http://localhost:3000/home/0/request_assignment/?user_id=' + user_id + '&unique_polling_id=' + unique_polling_id
+                  }, 1000);
                 }
-              });
-
+              }
+            );
         }
       }
 
