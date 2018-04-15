@@ -18,12 +18,14 @@ class HomeController < ApplicationController
   end
 
   def request_assignment
-    URI::HTTPS.build({
+    URI uri = URI::HTTP.build({
                          host: 'localhost',
                          port: 8000,
                          path: '/assign.html',
-                         query: "user_id=#{current_user.id}&filename=output.geojson"
+                         query: "user_id=#{current_user.id}&file_name=output.geojson"
                      })
+
+    redirect_to uri.to_s
   end
 
   def pamphlet_effort
