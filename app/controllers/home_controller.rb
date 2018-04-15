@@ -41,8 +41,9 @@ class HomeController < ApplicationController
         end
         
         pollingArea = params[:pollingArea]
+        volunteerId          = params[:id]
 
-        v = User.find(current_user.id)
+        v = User.find(volunteerId)
 
 
         puts "Found #{v}"
