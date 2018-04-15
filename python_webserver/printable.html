@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+
+      @media print
+        {    
+            .no-print, .no-print *
+            {
+                display: none !important;
+            }
+        }
+
+      html, body {
+        height: 100%;
+        width: 1100px;
+        padding: 0;
+        margin: 0;
+        }
+
+      #map {
+       height: 800px;
+       width: 100%;
+       overflow: hidden;
+       float: left;
+       border: thin solid #333;
+       }
+    </style>
+  </head>
+  <body>
+    <h3 class='no-print'>Please print this page to take along canvassing.</h3>
+    <div id="map"></div>
+    <div id="info"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+    <script src='http://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+
+    <script>
+
+      var map = L.map('map')
+        .setView([56.128016, -106.3468], 4);
+
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+          attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+          maxZoom: 18,
+          id: 'mapbox.streets',
+          accessToken: 'pk.eyJ1IjoiYXRhbXNpbmdoIiwiYSI6ImNqZnpuMDd5dTBnZm4ycW54N2JsODN1ajUifQ.as43FSImMXRYDfhro0yuoQ'
+      }).addTo(map);
+
+      function getJsonFromUrl() {
+        var query = location.search.substr(1);
+        var result = {};
+        query.split("&").forEach(function(part) {
+          var item = part.split("=");
+          result[item[0]] = decodeURIComponent(item[1]);
+        });
+        return result;
+      }
+
+      // find file name and pod_id
+      var print_vars = getJsonFromUrl()
+
+      if ((print_vars.hasOwnProperty('file_name') && print_vars.hasOwnProperty('pod_id')) || print_vars.hasOwnProperty('unique_polling_id')){
+        // get polygon 
+        if (print_vars.hasOwnProperty('unique_polling_id')){
+          var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"_id": "' + print_vars["unique_polling_id"] + '"}&apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
+        }else{
+          var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"_id": "' + print_vars["file_name"] + ':' + print_vars["pod_id"] + '"}&apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
+        }
+
+        $.ajax({
+          dataType: "json",
+          url: query_string,
+          success: function( json ) {
+            // polygon_coor = json[0]["geometry"]["coordinates"][0]
+
+            var geojsonFeature = json[0];
+
+            var polygon = L.geoJSON(geojsonFeature)
+            polygon.addTo(map);
+            map.fitBounds(polygon.getBounds());
+
+            properties = json[0]["properties"]
+
+            var html_text = '<table class="table">'
+
+            if (!json[0].hasOwnProperty('status')) {
+              properties["Status"] = 'unknown'
+            }else{
+              properties["Status"] = json[0]['status']
+            }
+
+            for (var key in properties) {
+              html_text += '<tr>'
+              if (properties.hasOwnProperty(key)) {
+                var val = properties[key]
+                html_text += '<td>' + key + '</td>'
+                html_text += '<td>' + val + '</td>'
+              }
+              html_text += '</tr>'
+            }
+            html_text += '</table><br>'
+
+            $("#info").html(html_text)
+            setTimeout(
+              function() 
+              {
+                 window.print();
+              }, 2000);
+            
+          }
+        });
+
+      }
+
+    </script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+  </body>
+</html>
