@@ -1,4 +1,7 @@
 class HomeController < ApplicationController
+
+  PORT_MAP_SOFTWARE = 80
+
   before_action :authenticate_user!
 
   def index
@@ -21,7 +24,7 @@ class HomeController < ApplicationController
   def request_map_assignment
     URI uri = URI::HTTP.build({
                          host: 'localhost',
-                         port: 8000,
+                         port: HomeController::PORT_MAP_SOFTWARE,
                          path: '/assign.html',
                          query: "user_id=#{current_user.id}&file_name=output.geojson"
                      })
@@ -56,7 +59,7 @@ class HomeController < ApplicationController
 
     	URI uri = URI::HTTP.build({
         	host: 'localhost',
-            port: 8000,
+            port: HomeController::PORT_MAP_SOFTWARE,
             path: '/printable.html',
             query: "unique_polling_id=#{pollingArea}"
         })
