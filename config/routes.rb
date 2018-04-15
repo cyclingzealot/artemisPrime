@@ -12,7 +12,7 @@ Rails.application.routes.draw do
       post 'report_back', to: 'home#report_submit', as: 'report_submit'
 
       get 'request_map_assignment'
-      get 'request_assignment', to: 'home#pamphlet_effort', as: 'pamphlet_effort'
+      get 'pamphlet_effort', to: 'home#pamphlet_effort', as: 'pamphlet_effort'
     end
   end
 end
