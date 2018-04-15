@@ -21,4 +21,20 @@ class HomeController < ApplicationController
 
     redirect_to home_index_path, flash: { notice: 'Your report has been sent.' }
   end
+
+  def request_assignment
+    URI::HTTPS.build({
+      host: localhost,
+      port: 8000,
+      path: '/pickPollingArea.html',
+      query: "user_id = #{current_user.id}&filename=output.geojson"
+    })
+  end
+
+  def pamphlet_effort
+        pollingArea = params[:pollingArea]
+        volunteerId = params[:volunteerId]
+
+  end
+
 end
