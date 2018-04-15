@@ -1,7 +1,7 @@
 class HomeController < ApplicationController
 
-  MAP_SOFTWARE_PORT = 80
-  MAP_SOFTWARE_HOST = 'ec2-54-145-123-77.compute-1.amazonaws.com'
+  MAP_SOFTWARE_PORT = 8000
+  MAP_SOFTWARE_HOST = 'localhost'
 
   before_action :authenticate_user!
 
