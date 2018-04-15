@@ -38,15 +38,21 @@ class HomeController < ApplicationController
         end
         
         pollingArea = params[:pollingArea]
-        volunteerId = params[:id]
 
-        v = User.find_by({email: volunteerId))
+        v = User.find(current_user.id)
+
+
+        puts "Found #{v}"
+        v or raise "Volunteer not found!"
         
-        PamfletEffort.create!(
-            pollingAreaId:  pollingArea
+        pe = PamfletEffort.new(
+            pollingAreaId:  pollingArea,
             user: v
         )
 
+        pe.save!
+
+        head :no_content
         
 
   end
