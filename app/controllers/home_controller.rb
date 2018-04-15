@@ -32,8 +32,23 @@ class HomeController < ApplicationController
   end
 
   def pamphlet_effort
+
+        if not params[:test].nil?
+            render :inline => "<%= #{params.to_s} %>"
+            
+        end
+        
         pollingArea = params[:pollingArea]
-        volunteerId = params[:volunteerId]
+        volunteerId = params[:id]
+
+        v = User.find_by({email: volunteerId))
+        
+        PamfletEffort.create!(
+            pollingAreaId:  pollingArea
+            user: v
+        )
+
+        
 
   end
 
