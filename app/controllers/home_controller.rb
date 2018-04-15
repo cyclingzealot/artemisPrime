@@ -58,11 +58,13 @@ class HomeController < ApplicationController
 
 		puts "Success!!! Redirecting...."
 
+        #http://54.145.123.77/printable.html?file_name=output.geojson&pod_id=115719
+
     	URI uri = URI::HTTP.build({
         	host: HomeController::MAP_SOFTWARE_HOST,
             port: HomeController::MAP_SOFTWARE_PORT,
             path: '/printable.html',
-            query: "unique_polling_id=#{pollingArea}"
+            query: "file_name=output.geojson&pod_id=#{pollingArea}" #"unique_polling_id=#{pollingArea}"
         })
 
     	redirect_to uri.to_s
