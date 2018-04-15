@@ -1,6 +1,7 @@
 class HomeController < ApplicationController
 
-  PORT_MAP_SOFTWARE = 80
+  MAP_SOFTWARE_PORT = 80
+  MAP_SOFTWARE_HOST = 'ec2-54-145-123-77.compute-1.amazonaws.com'
 
   before_action :authenticate_user!
 
@@ -23,8 +24,8 @@ class HomeController < ApplicationController
 
   def request_map_assignment
     URI uri = URI::HTTP.build({
-                         host: 'localhost',
-                         port: HomeController::PORT_MAP_SOFTWARE,
+                         host: HomeController::MAP_SOFTWARE_HOST,
+                         port: HomeController::MAP_SOFTWARE_PORT,
                          path: '/assign.html',
                          query: "user_id=#{current_user.id}&file_name=output.geojson"
                      })
@@ -58,8 +59,8 @@ class HomeController < ApplicationController
 		puts "Success!!! Redirecting...."
 
     	URI uri = URI::HTTP.build({
-        	host: 'localhost',
-            port: HomeController::PORT_MAP_SOFTWARE,
+        	host: HomeController::MAP_SOFTWARE_HOST,
+            port: HomeController::MAP_SOFTWARE_PORT,
             path: '/printable.html',
             query: "unique_polling_id=#{pollingArea}"
         })
