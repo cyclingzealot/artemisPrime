@@ -38,6 +38,7 @@ def convert_shp_to_geojson(input_path, output_path):
   convert_binary = 'ogr2ogr'
 
   try:
+    print("Calling  " + convert_binary + '...')
     completed_process = subprocess.run(
       [convert_binary,'-f','GeoJSON', output_path, input_path,
        '-lco', 'RFC7946=YES'],
