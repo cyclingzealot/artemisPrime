@@ -11,6 +11,19 @@ Running these scripts require:
 * SshTunnel library for Python (`pip3 install sshtunnel`)
 * `ogr2ogr` binary
 
+
+### Linux Mint Rebecca users
+
+...  may want to install pip from the dev package, as the python in Rebeccas pacakges are getting old. See https://github.com/pypa/get-pip#usage
+
+... also see https://stackoverflow.com/a/34372779/1611925 for installing Python3.5
+
+### Debian (Linux Mint Rebecca) pacakges recommended / required:
+* python-pymongo or python3-pymongo
+* sudo apt-get install python-setuptools
+* sudo apt-get install python-dev python3.5-dev python3-dev
+
+
 ## Example Usage
 
 First, convert the SHP file to GeoJSON:
