@@ -57,3 +57,5 @@ rawData/data/
 log/
 .byebug_history
 doc/testingUrls.txt
+
+*.pyc
