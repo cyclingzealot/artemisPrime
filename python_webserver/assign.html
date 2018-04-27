@@ -61,20 +61,20 @@
       function assignPollingArea(unique_polling_id, user_id){
         if (confirm('Are you sure you want to confirm your canvasing area?')) {
             // make post request
-            var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/' + unique_polling_id + '?apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
-    
+            var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/' + unique_polling_id + '?apiKey=xxxx'
+
             // get drop down select
             var new_status = $("#statusoptions").val()
             var new_data = JSON.stringify( { "$set" : { "status" : 'assigned' } } )
 
-            $.ajax( { 
+            $.ajax( {
               type: "PUT",
               url: query_string,
               data: new_data,
               contentType: "application/json",
               success: function(response){
                 setTimeout(
-                  function() 
+                  function()
                   {
                      window.location.href = 'http://localhost:3000/home/0/request_assignment/?user_id=' + user_id + '&unique_polling_id=' + unique_polling_id
                   }, 1000);
@@ -89,7 +89,7 @@
       }
 
       if (assign_vars.hasOwnProperty('file_name') && assign_vars.hasOwnProperty('user_id')){
-        // get polygon 
+        // get polygon
         var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"filename": "' + assign_vars["file_name"] + '"}&apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
 
         $.ajax({
