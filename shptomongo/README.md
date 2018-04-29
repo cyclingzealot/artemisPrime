@@ -18,6 +18,8 @@ Running these scripts require:
 
 ... also see https://stackoverflow.com/a/34372779/1611925 for installing Python3.5
 
+... and see https://askubuntu.com/a/767965/333952 for installing version *3.4* of mongo client to interface with mlabs
+
 ### Debian (Linux Mint Rebecca) pacakges recommended / required:
 * python-pymongo or python3-pymongo
 * sudo apt-get install python-setuptools
@@ -33,13 +35,13 @@ python3 shptojson.py -i federalPollingBoundariesSample.shp
 ```
 
 Make sure there are `pollingAreas` and `rawGeoJson` collections on the
-MongoDB instance, in a `FairVotes` db. Then run the following command
+MongoDB instance, in a db specified by the url in the -m paramater. Then run the following command
 to upload the parsed contents of the GeoJSON file to MongoDB:
 
 ```
   python3 jsontomongo.py \
     -i output.geojson \
-    -m mongodb://user:pass@somebox.mlab.com:11248/fairvote
+    -m mongodb://user:pass@somebox.mlab.com:11248/fvc
 ```
 
 If you need to use an SSH tunnel to access MongoDB instead, you can use
