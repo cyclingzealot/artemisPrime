@@ -20,6 +20,8 @@ Running these scripts require:
 
 ... and see https://askubuntu.com/a/767965/333952 for installing version *3.4* of mongo client to interface with mlabs
 
+... and make sure you have version 3.6.1 of pymongo: sudo pip3.5 install pymongo==3.6.1
+
 ### Debian (Linux Mint Rebecca) pacakges recommended / required:
 * python-pymongo or python3-pymongo
 * sudo apt-get install python-setuptools
