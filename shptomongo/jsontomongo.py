@@ -36,6 +36,10 @@ def load_command_line_arguments():
   parser = argparse.ArgumentParser(description='Uploads a GeoJSON file to MongoDB.')
   parser.add_argument('--file', '-i', required=True,
                       help='the GeoJSON file')
+  parser.add_argument('--paIdentifier', '-a', required=True,
+                      help='The label of the poling area identfier (P_ID federally, VA_CODE in BC')
+  parser.add_argument('--edaIdentifier', '-e', required=True,
+                      help='The label of the electoral district identfier (ED_ABBREV in BC)')
   parser.add_argument('--mongodb', '-m', required=False,
                     help='the mongo db connection string')
   parser.add_argument('--host', '-s', required=False,
@@ -59,26 +63,35 @@ def upload_with_ssh_tunnel(arguments):
 
 def upload_with_direct_connection(arguments):
   client = pymongo.MongoClient(arguments.mongodb)
-  upload_json_to_mongo(client, arguments.file)
+  upload_json_to_mongo(client, arguments.file, arguments.edaIdentifier, arguments.paIdentifier)
 
-def upload_json_to_mongo(client, input_file):
+def upload_json_to_mongo(client, input_file, edIdIdentifier, pollingAreaIdIdentifier):
   """Upload JSON data to MongoDB instance."""
   with open(input_file) as geojson_file:
     raw_json = geojson_file.read()
     parsed_json = json.loads(raw_json)
 
-    create_raw_geo_json_entry(client, input_file, raw_json)
+    #create_raw_geo_json_entry(client, input_file, raw_json)
+    create_raw_geo_json_entry(client, input_file, parsed_json, edIdIdentifier, pollingAreaIdIdentifier)
     create_polling_area_entry(client, input_file, parsed_json)
 
-def create_raw_geo_json_entry(client, input_file, raw_json):
-  """Upload the raw GeoJSON file."""
-  raw_geo_json_entry = {
-    "_id": input_file,
-    "file": raw_json
-  }
+# edIdIdentifier:           the name of the field (within features.properties) that has the electoral district ID
+# pollingAreaIdIdentifier:  the name of the field (within features.properties) that has the polling area ID
+def create_raw_geo_json_entry(client, input_file, parsed_json, edIdIdentifier, pollingAreaIdIdentifier):
+    """Upload the raw GeoJSON file."""
+    import datetime
 
-  client.fairvote.rawGeoJson.update(
-    {'_id':input_file}, {"$set": raw_geo_json_entry}, upsert=True)
+    for pollingAreaData in parsed_json.get('features'):
+        edId = pollingAreaData.get('properties').get(edIdIdentifier),
+        pollingId = pollingAreaData.get('properties').get(pollingAreaIdIdentifier)
+        db_entry = {
+            "file_name_source": input_file,
+	        "data": pollingAreaData,
+            "created": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        client.fairvote.rawGeoJson.update(
+            {'_id':pollingAreaIdIdentifier}, {"$set": db_entry}, upsert=True
+        )
 
 def create_polling_area_entry(client, input_file, parsed_json):
   """Upload the contents of the GeoJSON file as documents."""
