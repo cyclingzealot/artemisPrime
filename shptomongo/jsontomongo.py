@@ -15,6 +15,10 @@ import pymongo
 import json
 import argparse
 from sshtunnel import SSHTunnelForwarder
+import datetime
+import sys
+import pdb
+
 
 def main():
   """
@@ -75,23 +79,55 @@ def upload_json_to_mongo(client, input_file, edIdIdentifier, pollingAreaIdIdenti
     create_raw_geo_json_entry(client, input_file, parsed_json, edIdIdentifier, pollingAreaIdIdentifier)
     create_polling_area_entry(client, input_file, parsed_json)
 
+
+def printProgress(count, total, doingStr, zeroBased = False):
+    if zeroBased:
+        count += 1
+
+    if count == 1:
+        print ("\n")
+        print ("Begin %s ..." % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+    sys.stdout.write("\r%.0f %% (%i/%i) %s ..." % (count*100/total, count, total, doingStr))
+
+
+    if count == total:
+        print ("\n")
+        print ("Done %s " % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+
+
+
 # edIdIdentifier:           the name of the field (within features.properties) that has the electoral district ID
 # pollingAreaIdIdentifier:  the name of the field (within features.properties) that has the polling area ID
 def create_raw_geo_json_entry(client, input_file, parsed_json, edIdIdentifier, pollingAreaIdIdentifier):
     """Upload the raw GeoJSON file."""
-    import datetime
 
-    for pollingAreaData in parsed_json.get('features'):
-        edId = pollingAreaData.get('properties').get(edIdIdentifier),
+
+    print("\n")
+    features = parsed_json.get('features')
+    i=1
+    for pollingAreaData in features:
+        edId = pollingAreaData.get('properties').get(edIdIdentifier)
         pollingId = pollingAreaData.get('properties').get(pollingAreaIdIdentifier)
+
+        printProgress(i, len(features), "Doing %s of %s" % (pollingId, edId)
+
         db_entry = {
+            'polling_area': pollingId,
+            'ed_id': edId,
             "file_name_source": input_file,
 	        "data": pollingAreaData,
             "created": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
-        client.fairvote.rawGeoJson.update(
-            {'_id':pollingAreaIdIdentifier}, {"$set": db_entry}, upsert=True
+
+        #pdb.set_trace()
+        client.fvc.ridings.update(
+            # I couldn't get update of subdocuments to work, so concatenating the ed & polling id together
+            {'_id':edId+pollingId}, {'$set': db_entry}, upsert=True
         )
+        i += 1
+
 
 def create_polling_area_entry(client, input_file, parsed_json):
   """Upload the contents of the GeoJSON file as documents."""
@@ -104,7 +140,7 @@ def create_polling_area_entry(client, input_file, parsed_json):
     polling_area["filename"] = input_file
     polling_area["status"] = 'unknown'
 
-    client.fairvote.pollingAreas.update(
+    client.fvc.pollingAreas.update(
       {'_id':key}, {"$set": polling_area}, upsert=True)
 
 if __name__ == "__main__":
