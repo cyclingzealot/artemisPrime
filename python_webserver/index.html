@@ -42,13 +42,21 @@
       }).addTo(map);
 
       // Get all polygons from db
-      // for now parsing geojson file 
+      // for now parsing geojson file
 
 
+    function getApiKey() {
+        var client = new XMLHttpRequest();
+        client.open('GET', '/apiKey.txt');
+        client.onreadystatechange = function() {
+            alert(client.responseText);
+        }
+        client.send();
+    }
 
       function update_status(file_name, pod_id){
-        var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/' + file_name + ':' + pod_id + '?apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
-        
+        var query_string = 'https://api.mlab.com/api/1/databases/fairvote/collections/pollingAreas/' + file_name + ':' + pod_id + '?apiKey=' + api_key
+
         // get drop down select
         var new_status = $("#statusoptions").val()
         var new_data = JSON.stringify( { "$set" : { "status" : new_status } } )
@@ -56,7 +64,7 @@
         // console.log(new_status)
         console.log(new_data)
 
-        $.ajax( { 
+        $.ajax( {
           type: "PUT",
           url: query_string,
           data: new_data,
@@ -66,7 +74,7 @@
             // console.log("it completes")
             // console.log(data)
             setTimeout(
-              function() 
+              function()
               {
                  location.reload();
               }, 1000);
@@ -82,7 +90,7 @@
 
       function get_pod_info(file_name, pod_id, layer) {
         // get info
-        var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"_id": "' + file_name + ':' + pod_id + '"}&apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
+        var query_string = 'https://api.mlab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"_id": "' + file_name + ':' + pod_id + '"}&apiKey=' + api_key
 
         $.ajax({
           dataType: "json",
@@ -128,7 +136,7 @@
             switch(curr_status) {
                 case 'unknown' :
                   layer.setStyle({
-                    color: "#fff", 
+                    color: "#fff",
                     fillColor: "LightGray",
                     weight: 1,
                     opacity: 1,
@@ -137,7 +145,7 @@
                   break;
                 case 'skipped' :
                   layer.setStyle({
-                    color: "#fff", 
+                    color: "#fff",
                     fillColor: "LightYellow",
                     weight: 1,
                     opacity: 1,
@@ -146,7 +154,7 @@
                   break;
                 case 'to_canvas' :
                   layer.setStyle({
-                    color: "#fff", 
+                    color: "#fff",
                     fillColor: "yellow",
                     weight: 1,
                     opacity: 1,
@@ -155,7 +163,7 @@
                   break;
                 case 'assigned' :
                   layer.setStyle({
-                    color: "#fff", 
+                    color: "#fff",
                     fillColor: "LightBlue",
                     weight: 1,
                     opacity: 1,
@@ -164,7 +172,7 @@
                   break;
                 case 'canvased' :
                   layer.setStyle({
-                    color: "#fff", 
+                    color: "#fff",
                     fillColor: "GreenYellow",
                     weight: 1,
                     opacity: 1,
@@ -184,10 +192,10 @@
 
       $.getJSON(file_name, function(json) {
 
-        geojson_obj = L.geoJSON(json, 
+        geojson_obj = L.geoJSON(json,
           {
             style: {
-              color: "#fff", 
+              color: "#fff",
               fillColor: "#fff",
               weight: 1,
               opacity: 0,
