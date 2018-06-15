@@ -139,7 +139,7 @@
             html_text += '<button onclick="return update_status(\''+ file_name + '\',' + pod_id +');">Submit</button>'
             html_text += '<br><br>'
 
-            html_text += '<button onclick="return openprintablepage(\'printable.html?file_name=' + file_name + '&pod_id=' + pod_id + '\');">Click to get printable version.</button>'
+            html_text += '<button onclick="return openprintablepage(\'printable.php?unique_polling_id=' + pod_id + '\');">Click to get printable version.</button>'
 
             layer.bindPopup(html_text);
 
@@ -199,7 +199,6 @@
       var file_name = "output.geojson"
       var saneCounter = 0
       var objLimit = 200
-      const bcDataProjection = '+proj=aea +lat_1=58.5 +lat_2=50 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
 
       function onEachFeature(feature, layer) {
         if (saneCounter < objLimit) {
@@ -238,12 +237,7 @@
                 }
 
             },
-            coordsToLatLng: function(coordinates) {
-                //console.log("Original coordinates: " + coordinates)
-                transformedCoords = proj4(bcDataProjection , "WGS84", coordinates)
-                //console.log("Transformed coordinates: " + transformedCoords)
-                return [transformedCoords[1], transformedCoords[0]];
-            }
+            <?php echo $proj4transform; ?>
           }
         )
 

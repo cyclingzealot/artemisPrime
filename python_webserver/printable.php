@@ -1,3 +1,6 @@
+<?php
+    require_once(__DIR__.'/config.php');
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,7 +10,7 @@
     <style>
 
       @media print
-        {    
+        {
             .no-print, .no-print *
             {
                 display: none !important;
@@ -40,6 +43,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
     <script src='http://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js'></script>
 
     <script>
 
@@ -67,11 +71,11 @@
       var print_vars = getJsonFromUrl()
 
       if ((print_vars.hasOwnProperty('file_name') && print_vars.hasOwnProperty('pod_id')) || print_vars.hasOwnProperty('unique_polling_id')){
-        // get polygon 
+        // get polygon
         if (print_vars.hasOwnProperty('unique_polling_id')){
-          var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"_id": "' + print_vars["unique_polling_id"] + '"}&apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
+          var query_string = '<?php echo $baseQuery; ?>&q={"_id": "' + print_vars["unique_polling_id"] + '"}'
         }else{
-          var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"_id": "' + print_vars["file_name"] + ':' + print_vars["pod_id"] + '"}&apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
+          var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"_id": "' + print_vars["pod_id"] + '"}&apiKey=<?php echo $apiKey; ?>'
         }
 
         $.ajax({
@@ -80,13 +84,15 @@
           success: function( json ) {
             // polygon_coor = json[0]["geometry"]["coordinates"][0]
 
-            var geojsonFeature = json[0];
+            var geojsonFeature = json[0]["data"];
 
-            var polygon = L.geoJSON(geojsonFeature)
+            var polygon = L.geoJSON(geojsonFeature, {
+                 <?php echo $proj4transform; ?>
+                })
             polygon.addTo(map);
             map.fitBounds(polygon.getBounds());
 
-            properties = json[0]["properties"]
+            properties = json[0]["data"]["properties"]
 
             var html_text = '<table class="table">'
 
@@ -109,11 +115,11 @@
 
             $("#info").html(html_text)
             setTimeout(
-              function() 
+              function()
               {
                  window.print();
               }, 2000);
-            
+
           }
         });
 

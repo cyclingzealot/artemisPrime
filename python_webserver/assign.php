@@ -1,3 +1,6 @@
+<?php
+    require_once(__DIR__.'/config.php');
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -61,7 +64,7 @@
       function assignPollingArea(unique_polling_id, user_id){
         if (confirm('Are you sure you want to confirm your canvasing area?')) {
             // make post request
-            var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/' + unique_polling_id + '?apiKey=xxxx'
+            var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/' + unique_polling_id + '?apiKey=<?php echo $apiKey; ?>'
 
             // get drop down select
             var new_status = $("#statusoptions").val()
@@ -90,7 +93,7 @@
 
       if (assign_vars.hasOwnProperty('file_name') && assign_vars.hasOwnProperty('user_id')){
         // get polygon
-        var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"filename": "' + assign_vars["file_name"] + '"}&apiKey=R9nfqWX-6DESCOHoslMu63RVukVIIEjV'
+        var query_string = 'https://api.mongolab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"filename": "' + assign_vars["file_name"] + '"}&apiKey=<?php echo $apiKey; ?>'
 
         $.ajax({
           dataType: "json",
