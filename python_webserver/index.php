@@ -1,3 +1,6 @@
+<?php
+    require_once(__DIR__.'/config.php');
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -55,7 +58,7 @@
     }
 
       function update_status(file_name, pod_id){
-        var query_string = 'https://api.mlab.com/api/1/databases/fairvote/collections/pollingAreas/' + file_name + ':' + pod_id + '?apiKey=' + api_key
+        var query_string = 'https://api.mlab.com/api/1/databases/fairvote/collections/pollingAreas/' + file_name + ':' + pod_id + '?apiKey=' + <?php echo $apiKey; ?>
 
         // get drop down select
         var new_status = $("#statusoptions").val()
