@@ -60,3 +60,4 @@ doc/testingUrls.txt
 
 *.pyc
 config/mongo.py*
+python_webserver/config.php

@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
     <script src='http://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js'></script>
 
     <script>
 
@@ -48,17 +49,21 @@
       // for now parsing geojson file
 
 
-    function getApiKey() {
-        var client = new XMLHttpRequest();
-        client.open('GET', '/apiKey.txt');
-        client.onreadystatechange = function() {
-            alert(client.responseText);
-        }
-        client.send();
-    }
+    //Don't think this is needed
+    //function getApiKey() {
+    //    var client = new XMLHttpRequest();
+    //    client.open('GET', '/apiKey.txt');
+    //    client.onreadystatechange = function() {
+    //        alert(client.responseText);
+    //    }
+    //    client.send();
+    //}
 
       function update_status(file_name, pod_id){
-        var query_string = 'https://api.mlab.com/api/1/databases/fairvote/collections/pollingAreas/' + file_name + ':' + pod_id + '?apiKey=' + <?php echo $apiKey; ?>
+        //atam query
+        // var query_string = 'https://api.mlab.com/api/1/databases/fairvote/collections/pollingAreas/' + file_name + ':' + pod_id + '?apiKey=<?php echo $apiKey; ?>'
+        //my query
+        var query_string = 'https://api.mlab.com/api/1/databases/fvc/collections/ridings/?q={"_id": "' + pod_id  + '"}&apiKey=<?php echo $apiKey; ?>'
 
         // get drop down select
         var new_status = $("#statusoptions").val()
@@ -93,13 +98,17 @@
 
       function get_pod_info(file_name, pod_id, layer) {
         // get info
-        var query_string = 'https://api.mlab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"_id": "' + file_name + ':' + pod_id + '"}&apiKey=' + api_key
+        // atam query
+        // var query_string = 'https://api.mlab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"_id": "' + file_name + ':' + pod_id + '"}&apiKey=<?php echo $apiKey; ?>'
+        // my query
+        var query_string = 'https://api.mlab.com/api/1/databases/fvc/collections/ridings/?q={"_id": "' + pod_id  + '"}&apiKey=<?php echo $apiKey; ?>'
+
 
         $.ajax({
           dataType: "json",
           url: query_string,
           success: function( json ) {
-            properties = json[0]["properties"]
+            properties = json[0]["data"]["properties"]
 
             var html_text = '<table>'
 
@@ -188,12 +197,22 @@
       }
 
       var file_name = "output.geojson"
+      var saneCounter = 0
+      var objLimit = 200
+      const bcDataProjection = '+proj=aea +lat_1=58.5 +lat_2=50 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
 
       function onEachFeature(feature, layer) {
-        get_pod_info(file_name, feature.properties.PD_ID, layer)
+        if (saneCounter < objLimit) {
+            get_pod_info(file_name, feature.properties.EDVA_CODE, layer);
+            saneCounter += 1;
+        }
       }
 
+
       $.getJSON(file_name, function(json) {
+
+        saneCounter02 = 0
+        bigLog = 0
 
         geojson_obj = L.geoJSON(json,
           {
@@ -204,11 +223,32 @@
               opacity: 0,
               fillOpacity: 0
             },
-            onEachFeature: onEachFeature
+            onEachFeature: onEachFeature,
+            filter: function(featureData, layer) {
+                //if (bigLog < objLimit) {
+                //    console.log(featureData)
+                //    console.log(featureData.properties.ED_ABBREV)
+                //    bigLog += 1
+                //}
+                if (featureData.properties.ED_ABBREV == "ABM" && saneCounter02 <= objLimit) {
+                    saneCounter02 += 1
+                    return true
+                } else {
+                    return false
+                }
+
+            },
+            coordsToLatLng: function(coordinates) {
+                //console.log("Original coordinates: " + coordinates)
+                transformedCoords = proj4(bcDataProjection , "WGS84", coordinates)
+                //console.log("Transformed coordinates: " + transformedCoords)
+                return [transformedCoords[1], transformedCoords[0]];
+            }
           }
         )
 
         geojson_obj.addTo(map);
+        console.log(geojson_obj.getBounds());
         map.fitBounds(geojson_obj.getBounds());
       });
 
