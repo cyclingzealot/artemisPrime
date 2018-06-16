@@ -13,8 +13,11 @@
         padding: 0;
         margin: 0;
         }
+      .marginsH {
+        height: 60px;
+      }
       #map {
-       height: 900px;
+       height: 100%;
        width: 100%;
        overflow: hidden;
        float: left;
@@ -24,6 +27,7 @@
   </head>
   <body>
 
+    <div id="controls" class="marginsH">Ridings: <select id="ridingsSelect"></select></div>
     <div id="map"></div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -45,19 +49,41 @@
           accessToken: 'pk.eyJ1IjoiYXRhbXNpbmdoIiwiYSI6ImNqZnpuMDd5dTBnZm4ycW54N2JsODN1ajUifQ.as43FSImMXRYDfhro0yuoQ'
       }).addTo(map);
 
+    //Populate the pull down menu               // Include ed_id field, exclude _id
+    //Ccould be done server side in php
+    var query = '<?php echo $baseQuery; ?>' + '&f={"ed_id":1,"_id":0}'
+
+    $.ajax( { url: query,
+          data: JSON.stringify( {"distinct": "ed_id"} ),
+          type: "GET",
+          contentType: "application/json",
+          success: function(response) {
+
+                ridings = []
+                lookup = {}
+                for (var item, i=0; item=response[i++];) {
+                    var edcode = item["ed_id"]
+
+                    if (!(edcode in lookup)) {
+                        lookup[edcode] = 1;
+                        ridings.push(edcode)
+
+                    }
+
+                }
+
+                $.each(ridings, function(key, edcode) {
+                    console.log(edcode)
+                    $('#ridingsSelect')
+                        .append($("<option></option>").attr("value",edcode).text(edcode));
+                })
+
+            },
+    } )
+
       // Get all polygons from db
       // for now parsing geojson file
 
-
-    //Don't think this is needed
-    //function getApiKey() {
-    //    var client = new XMLHttpRequest();
-    //    client.open('GET', '/apiKey.txt');
-    //    client.onreadystatechange = function() {
-    //        alert(client.responseText);
-    //    }
-    //    client.send();
-    //}
 
       function update_status(file_name, pod_id){
         //atam query
