@@ -53,6 +53,7 @@
     //Ccould be done server side in php
     var query = '<?php echo $baseQuery; ?>' + '&f={"ed_id":1,"_id":0}'
 
+    //Parse JSON for pull down menu population
     $.ajax( { url: query,
           data: JSON.stringify( {"distinct": "ed_id"} ),
           type: "GET",
@@ -222,9 +223,10 @@
         });
       }
 
+      //TODO: Set this to the baseQuery with a riding id
       var file_name = "output.geojson"
       var saneCounter = 0
-      var objLimit = 200
+      var objLimit = 600
 
       function onEachFeature(feature, layer) {
         if (saneCounter < objLimit) {
@@ -234,7 +236,9 @@
       }
 
 
-      $.getJSON(file_name, function(json) {
+      function draw() {
+        map.removeLayer
+        $.getJSON(file_name, function(json) {
 
         saneCounter02 = 0
         bigLog = 0
@@ -250,12 +254,13 @@
             },
             onEachFeature: onEachFeature,
             filter: function(featureData, layer) {
-                //if (bigLog < objLimit) {
-                //    console.log(featureData)
-                //    console.log(featureData.properties.ED_ABBREV)
-                //    bigLog += 1
-                //}
-                if (featureData.properties.ED_ABBREV == "ABM" && saneCounter02 <= objLimit) {
+
+                var ridingsSelectObj = document.getElementById("ridingsSelect");
+                var ridingSelectedId = ridingsSelectObj.options[ridingsSelectObj.selectedIndex].value;
+
+                console.log('Looking for ' + ridingSelectedId)
+
+                if (featureData.properties.ED_ABBREV == ridingSelectedId && saneCounter02 <= objLimit) {
                     saneCounter02 += 1
                     return true
                 } else {
@@ -271,6 +276,14 @@
         console.log(geojson_obj.getBounds());
         map.fitBounds(geojson_obj.getBounds());
       });
+      }
+
+      // Might be simpler to just do the select server side
+      $( document ).ready(function() {
+          console.log('Document ready. Executing...')
+            $('#ridingsSelect').change(function() {console.log('Select.change fired');  draw()})
+      })
+
 
     </script>
 
