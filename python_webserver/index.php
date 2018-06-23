@@ -90,7 +90,9 @@
         //atam query
         // var query_string = 'https://api.mlab.com/api/1/databases/fairvote/collections/pollingAreas/' + file_name + ':' + pod_id + '?apiKey=<?php echo $apiKey; ?>'
         //my query
-        var query_string = 'https://api.mlab.com/api/1/databases/fvc/collections/ridings/?q={"_id": "' + pod_id  + '"}&apiKey=<?php echo $apiKey; ?>'
+        var query_string = '<?php echo $baseQuery; ?>' + '&q={"_id":"' + pod_id  + '"}'
+
+        console.log('query_string is ' + query_string)
 
         // get drop down select
         var new_status = $("#statusoptions").val()
@@ -108,11 +110,15 @@
             // console.log(response)
             // console.log("it completes")
             // console.log(data)
-            setTimeout(
-              function()
-              {
-                 location.reload();
-              }, 1000);
+
+            draw()
+
+            //setTimeout(
+            //  function()
+            //  {
+            //     location.reload(); //TODO Change this so URL accepts a location reload? Or call redraw?
+            //  }, 1000);
+
             }
           }
         );
@@ -163,7 +169,7 @@
             html_text += '  <option value="assigned">Assigned</option>'
             html_text += '  <option value="canvased">Canvased</option>'
             html_text += '</select>'
-            html_text += '<button onclick="return update_status(\''+ file_name + '\',' + pod_id +');">Submit</button>'
+            html_text += '<button onclick="return update_status(\''+ file_name + '\',\'' + pod_id +'\');">Submit</button>'
             html_text += '<br><br>'
 
             html_text += '<button onclick="return openprintablepage(\'printable.php?unique_polling_id=' + pod_id + '\');">Click to get printable version.</button>'
