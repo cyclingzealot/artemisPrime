@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Artemis Prime"
+AuthUserFile /home/jlam/programming/artemisPrime/python_webserver/.htpasswd
+require valid-user
