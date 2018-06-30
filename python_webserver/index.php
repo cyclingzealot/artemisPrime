@@ -134,7 +134,7 @@
         // atam query
         // var query_string = 'https://api.mlab.com/api/1/databases/fairvote/collections/pollingAreas/?q={"_id": "' + file_name + ':' + pod_id + '"}&apiKey=<?php echo $apiKey; ?>'
         // my query
-        var query_string = 'https://api.mlab.com/api/1/databases/fvc/collections/ridings/?q={"_id": "' + pod_id  + '"}&apiKey=<?php echo $apiKey; ?>'
+        var query_string = '<?php echo $baseQuery; ?>' + '&q={"_id": "' + pod_id  + '"}'
 
 
         $.ajax({
@@ -230,7 +230,13 @@
       }
 
       //TODO: Set this to the baseQuery with a riding id
-      var file_name = "output.geojson"
+      var file_name = "output.geojson"    // TODO: this should be a query.  Find the query.
+                                        // Kind of like this but with a selector?
+                                        //var query_string = '<?php echo $baseQuery; ?>' + '&q={"_id": "' + pod_id  + '"}'
+                                        // TODO: then figure out how to format the data as if it was a geojason file
+                                        // Slector: '&f={"ed_id":1,"_id":0}'
+                                        //What'sthe query that var string would send?
+                                        //Experiment in the browser
       var saneCounter = 0
       var objLimit = 600
 
@@ -259,6 +265,7 @@
               fillOpacity: 0
             },
             onEachFeature: onEachFeature,
+            // TODO: Replace filter below with a query for file_name
             filter: function(featureData, layer) {
 
                 var ridingsSelectObj = document.getElementById("ridingsSelect");
