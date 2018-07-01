@@ -230,14 +230,8 @@
       }
 
       //TODO: Set this to the baseQuery with a riding id
-      var file_name = "output.geojson"    // TODO: this should be a query.  Find the query.
-                                        // Kind of like this but with a selector?
-                                        //var query_string = '<?php echo $baseQuery; ?>' + '&q={"_id": "' + pod_id  + '"}'
-                                        // TODO: then figure out how to format the data as if it was a geojason file
-                                        // Slector: '&f={"ed_id":1,"_id":0}'
-                                        //What'sthe query that var string would send?
                                         //This worked: https://api.mlab.com/api/1/databases/fvc/collections/ridings/?apiKey=______apiKey_________&f={%22data%22:1,%22_id%22:1,%22ed_id%22:1}&q={%22ed_id%22:%20%22__________ridingId______________________%22}
-                                        //If we select the data element of the query above, and for each of the values (which are hashes), but them into an array indexed "features", and another element in the same level called "type":"FeatureCollection", that should give us valid geojason.  All the needed attributes ("type", "properties", "geometry")
+                                        //TODO: If we select the data element of the query above, and for each of the values (which are hashes), but them into an array indexed "features", and another element in the same level called "type":"FeatureCollection", that should give us valid geojason.  All the needed attributes ("type", "properties", "geometry")
       var saneCounter = 0
       var objLimit = 600
 
