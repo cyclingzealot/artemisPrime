@@ -13,10 +13,13 @@ $ridingId = $query['riding'];
 					  //Select data,     id  and     riding id         that has ed_id=ridingID
 $url_mlab="$baseQuery&f={%22data%22:1,%22_id%22:1,%22ed_id%22:1}&q={%22ed_id%22:%20%22$ridingId%22}";
 
-$ridingGeoJason;
-
 //Get the contents of url_mlab
+$ridingGeoJson = file_get_contents($url_mlab);
+
 //Parse the elements so that :
+
+
+
 //If we select the data element of the query above, and for each of the values (which are hashes), but them into an array indexed "features", and another element in the same level called "type":"FeatureCollection", that should give us valid geojason.  All the needed attributes ("type",    "properties", "geometry")
 //Type is already there: {
 //"type": "FeatureCollection",
