@@ -246,7 +246,9 @@
       function draw() {
         map.removeLayer
         //TODO: Replace file_name with query from line 239, I think..... the output still needsto be processsed to make it geojason
-        $.getJSON(file_name, function(json) {
+            // This one, maybe?: https://api.mlab.com/api/1/databases/fvc/collections/ridings/?apiKey=__________apiKey_____________-&q={%22_id%22:%22ABM072%22}&f={%22data%22:1,%22_id%22:1,%22ed_id%22:1}
+                                                                                                                                //Riding id  ^^^^^^
+       $.getJSON(file_name, function(json) {
 
         saneCounter02 = 0
         bigLog = 0
