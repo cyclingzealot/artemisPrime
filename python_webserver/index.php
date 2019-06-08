@@ -244,11 +244,25 @@
 
 
       function draw() {
-        map.removeLayer
-        //TODO: Replace file_name with query from line 239, I think..... the output still needsto be processsed to make it geojason
-            // This one, maybe?: https://api.mlab.com/api/1/databases/fvc/collections/ridings/?apiKey=__________apiKey_____________-&q={%22_id%22:%22ABM072%22}&f={%22data%22:1,%22_id%22:1,%22ed_id%22:1}
-                                                                                                                                //Riding id  ^^^^^^
-       $.getJSON(file_name, function(json) {
+        map.removeLayer;
+
+       var ridingsSelectObj = document.getElementById("ridingsSelect");
+       var ridingSelectedId = ridingsSelectObj.options[ridingsSelectObj.selectedIndex].value;
+
+       var queryRidingInfo = 'https://api.mlab.com/api/1/databases/fvc/collections/ridings/?apiKey=<?php echo $apiKey; ?>&q={"ed_id":"' + ridingSelectedId + '"}&f={"data":1,"_id":1,"ed_id":1}'
+
+
+       console.log('queryRidingInfo: ' + queryRidingInfo);
+
+       // queryRidingInfo has a query returning data now, but either :
+       // - the code must proces that data structure OR
+       // - the data strcuture must match output.geojson
+
+       // If we use the data strcuture approach, the beginning structure of data returned by queryRidingInfo needs changing:
+       // - Data from output.geoson: { "type": "FeatureCollection", "features":
+       // - Data of queryRidingInfo: [ { "_id" : "ABS057" , "ed_id" : "ABS" , "data" :
+
+       $.getJSON(queryRidingInfo, function(json) {
 
         saneCounter02 = 0
         bigLog = 0
@@ -263,22 +277,24 @@
               fillOpacity: 0
             },
             onEachFeature: onEachFeature,
+
             // TODO: Replace filter below with a query for file_name
-            filter: function(featureData, layer) {
+            // filter: function(featureData, layer) {
+//
+  //               var ridingsSelectObj = document.getElementById("ridingsSelect");
+    //             var ridingSelectedId = ridingsSelectObj.options[ridingsSelectObj.selectedIndex].value;
+//
+  //               console.log('Looking for ' + ridingSelectedId)
+//
+                    // KEEP: This filter is not in use, but this saneCounter02 may help us if we are hitting memory errors
+  //               if (featureData.properties.ED_ABBREV == ridingSelectedId && saneCounter02 <= objLimit) {
+    //                 saneCounter02 += 1
+      //               return true
+        //         } else {
+          //           return false
+            //     }
 
-                var ridingsSelectObj = document.getElementById("ridingsSelect");
-                var ridingSelectedId = ridingsSelectObj.options[ridingsSelectObj.selectedIndex].value;
-
-                console.log('Looking for ' + ridingSelectedId)
-
-                if (featureData.properties.ED_ABBREV == ridingSelectedId && saneCounter02 <= objLimit) {
-                    saneCounter02 += 1
-                    return true
-                } else {
-                    return false
-                }
-
-            },
+//             },
             <?php echo $proj4transform; ?>
           }
         )
