@@ -259,8 +259,10 @@
        // - the data strcuture must match output.geojson
 
        // If we use the data strcuture approach, the beginning structure of data returned by queryRidingInfo needs changing:
-       // - Data from output.geoson: { "type": "FeatureCollection", "features":
-       // - Data of queryRidingInfo: [ { "_id" : "ABS057" , "ed_id" : "ABS" , "data" :
+       // - It expects: Data from output.geoson: { "type": "FeatureCollection", "features": [ {type:, properties: geometry: }
+       // - We have: Data of queryRidingInfo: [ { "_id" : "ABS057" , "ed_id" : "ABS" , "data" :  {geometry:, type:, properties: }
+       // So, seems to me if we went through qeuryRIdingInfo, collecting in a a array "data", stuff that array in a hash
+       //       { "type": "FeatureCollection", "features": $array}, that would be parsable json
 
        $.getJSON(queryRidingInfo, function(json) {
 
