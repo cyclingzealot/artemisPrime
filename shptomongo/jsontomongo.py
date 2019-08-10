@@ -1,14 +1,20 @@
 """
 Example usage:
   python3 jsontomongo.py \
-    -i output.geojson \
+    -i bc.geojson \
     -u ubuntu \
     -s some-server.amazonaws.com \
     -p ~/mongokey.pem
+    -a VA_CODE
+    -e ED_ABBREV
+    -x bc2013
 
   python3 jsontomongo.py \
     -i output.geojson \
     -m mongodb://user:pass@somebox.mlab.com:11248/fairvote
+    -a VA_CODE
+    -e ED_ABBREV
+    -x bc2013
 """
 
 import pymongo
@@ -43,7 +49,9 @@ def load_command_line_arguments():
   parser.add_argument('--paIdentifier', '-a', required=True,
                       help='The label of the poling area identfier (P_ID federally, VA_CODE in BC')
   parser.add_argument('--edaIdentifier', '-e', required=True,
-                      help='The label of the electoral district identfier (ED_ABBREV in BC)')
+                      help='The label of the electoral district identfier (FED_NUM federally, ED_ABBREV in BC)')
+  parser.add_argument('--electionIdentifier', '-x', required=True,
+                      help='The arbitrary string identifying the election, preferably a short string for juridiction and the year.  This will also be used for mongodb collection name, so no spaces(ex: bc2015, cdn2015)')
   parser.add_argument('--mongodb', '-m', required=False,
                     help='the mongo db connection string')
   parser.add_argument('--host', '-s', required=False,
@@ -67,7 +75,7 @@ def upload_with_ssh_tunnel(arguments):
 
 def upload_with_direct_connection(arguments):
   client = pymongo.MongoClient(arguments.mongodb)
-  upload_json_to_mongo(client, arguments.file, arguments.edaIdentifier, arguments.paIdentifier)
+  upload_json_to_mongo(client, arguments.file, arguments.edaIdentifier, arguments.paIdentifier, argumetns.electionIdentifier)
 
 def upload_json_to_mongo(client, input_file, edIdIdentifier, pollingAreaIdIdentifier):
   """Upload JSON data to MongoDB instance."""
@@ -76,7 +84,7 @@ def upload_json_to_mongo(client, input_file, edIdIdentifier, pollingAreaIdIdenti
     parsed_json = json.loads(raw_json)
 
     #create_raw_geo_json_entry(client, input_file, raw_json)
-    create_raw_geo_json_entry(client, input_file, parsed_json, edIdIdentifier, pollingAreaIdIdentifier)
+    create_raw_geo_json_entry(client, input_file, parsed_json, edIdIdentifier, pollingAreaIdIdentifier, election)
     create_polling_area_entry(client, input_file, parsed_json)
 
 
@@ -100,7 +108,7 @@ def printProgress(count, total, doingStr, zeroBased = False):
 
 # edIdIdentifier:           the name of the field (within features.properties) that has the electoral district ID
 # pollingAreaIdIdentifier:  the name of the field (within features.properties) that has the polling area ID
-def create_raw_geo_json_entry(client, input_file, parsed_json, edIdIdentifier, pollingAreaIdIdentifier):
+def create_raw_geo_json_entry(client, input_file, parsed_json, edIdIdentifier, pollingAreaIdIdentifier, election):
     """Upload the raw GeoJSON file."""
 
 
@@ -111,7 +119,7 @@ def create_raw_geo_json_entry(client, input_file, parsed_json, edIdIdentifier, p
         edId = pollingAreaData.get('properties').get(edIdIdentifier)
         pollingId = pollingAreaData.get('properties').get(pollingAreaIdIdentifier)
 
-        printProgress(i, len(features), "Doing %s of %s" % (pollingId, edId)
+        printProgress(i, len(features), "Doing %s of %s" % (pollingId, edId))
 
         db_entry = {
             'polling_area': pollingId,
@@ -122,7 +130,7 @@ def create_raw_geo_json_entry(client, input_file, parsed_json, edIdIdentifier, p
         }
 
         #pdb.set_trace()
-        client.fvc.ridings.update(
+        client.fvc[election].update(
             # I couldn't get update of subdocuments to work, so concatenating the ed & polling id together
             {'_id':edId+pollingId}, {'$set': db_entry}, upsert=True
         )

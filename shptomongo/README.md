@@ -36,8 +36,9 @@ First, convert the SHP file to GeoJSON:
 python3 shptojson.py -i federalPollingBoundariesSample.shp
 ```
 
-Make sure there are `pollingAreas` and `rawGeoJson` collections on the
-MongoDB instance, in a db specified by the url in the -m paramater. Then run the following command
+In the next step, we will upload the geojson to the mongodb instance.
+You can specify the collection name with the -x argument.  This should also represent the jurisdiction and year.
+Make sure that collection exists in the MongoDB instance, in a db specified by the url in the -m paramater. Then run the following command
 to upload the parsed contents of the GeoJSON file to MongoDB:
 
 ```
